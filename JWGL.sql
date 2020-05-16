@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2020/5/16 19:53:28                           */
+/* Created on:     2020/5/16 20:09:59                           */
 /*==============================================================*/
 
 
@@ -19,7 +19,7 @@ drop table if exists teacher;
 /*==============================================================*/
 create table course
 (
-   courseID             int not null,
+   courseID             int not null auto_increment,
    teacherID            int,
    departmentID         int,
    courseName           varchar(64),
@@ -31,7 +31,7 @@ create table course
 /*==============================================================*/
 create table department
 (
-   departmentID         int not null,
+   departmentID         int not null auto_increment,
    departmentName       varchar(64),
    departmentAddress    varchar(64),
    contactInformation   varchar(64),
@@ -55,7 +55,7 @@ create table sc
 /*==============================================================*/
 create table student
 (
-   studentID            int not null,
+   studentID            int not null auto_increment,
    departmentID         int,
    name                 varchar(64),
    studentNumber        varchar(20),
@@ -70,7 +70,7 @@ create table student
 /*==============================================================*/
 create table teacher
 (
-   teacherID            int not null,
+   teacherID            int not null auto_increment,
    departmentID         int,
    teacherNumber        varchar(20),
    teacherName          varchar(64),

@@ -113,9 +113,13 @@ def addNewCourse(cName, cDepart, cTeacher):
     """
     添加课程
     """
-    sql = 'insert into course(cName,cDepart,cTeacher) values({},{},{})'.format(
+    sql = '''insert into course(courseName,departmentID,teacherID) values('{}',{},{})'''.format(
         cName, cDepart, cTeacher)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
 
 
 def delCourseByID(cId):
@@ -138,6 +142,6 @@ def updateCourse(cId, cName, cDepart, cTeacher):
     """
     修改对应id的课程信息
     """
-    sql = """UPDATE course SET cName='{}',cDepart='{}',cTeacher='{}' WHERE  cId = '{}' """.format(
+    sql = """UPDATE course SET courseName='{}',department='{}',cTeacher='{}' WHERE  cId = '{}' """.format(
         cName, cDepart, cTeacher, cId)
     db.cur.execute(sql)

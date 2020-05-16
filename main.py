@@ -23,6 +23,7 @@ def showHelp():
     print("""
         牛叉的学生管理系统
     """)
+    modules.addNewCourse('数据库', 1, 1)
 
 
 def mainLoop():
