@@ -43,7 +43,11 @@ def selectCourseByID(studentID, courseID):
     sql = '''
         insert into sc values ({},{})
     '''.format(studentID, courseID)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
 
 
 def quitCourseByID(scID):
@@ -53,7 +57,11 @@ def quitCourseByID(scID):
     sql = '''
         delete from sc where scID = {}
     '''.format(scID)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
 
 
 def updateGradeByID(scID, grade):
@@ -63,7 +71,11 @@ def updateGradeByID(scID, grade):
     sql = '''
             update sc set grades = {} where scID = {}
         '''.format(grade, scID)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
 
 
 def getStudentAllCourse(studentID):
@@ -94,7 +106,7 @@ def getCourseByID(cId):
     """
     根据id查询课程
     """
-    sql = """select * from course where cId = '{}'""" .format(cId)
+    sql = """select * from course where courseID = '{}'""" .format(cId)
     db.cur.execute(sql)
     return db.cur.fetchall()
 
@@ -107,6 +119,7 @@ def getCourseByName(cName):
     db.cur.execute(sql)
     return db.cur.fetchall()
 
+
 def getCoursebyTeacherID(teacherId):
     """
     根据教师id查询该老师任课的课程
@@ -115,14 +128,15 @@ def getCoursebyTeacherID(teacherId):
     db.cur.execute(sql)
     return db.cur.fetchall()
 
+
 def getCoursebyTeacherName(teacherName):
     """
     根据老师的姓名模糊查询该老师任课的课程
     """
-    sql = """select c.* from course c , Teacher t where t.teacherID = c. and teacherName like '%{}%'""" .format(teacherName)
+    sql = """select c.* from course c , Teacher t where t.teacherID = c. and teacherName like '%{}%'""" .format(
+        teacherName)
     db.cur.execute(sql)
     return db.cur.fetchall()
-
 
 
 # 添加课程
@@ -144,7 +158,11 @@ def delCourseByID(cId):
     根据课程id删除课程
     """
     sql = """DELETE FROM course WHERE  cId = '{}'""".format(cId)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
 
 
 def delCourseByName(cName):
@@ -152,7 +170,11 @@ def delCourseByName(cName):
     根据课程名称删除课程
     """
     sql = """DELETE FROM course WHERE  cName like '%{}%'""".format(cName)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
 
 
 def updateCourse(cId, cName, cDepart, cTeacher):
@@ -161,4 +183,8 @@ def updateCourse(cId, cName, cDepart, cTeacher):
     """
     sql = """UPDATE course SET courseName='{}',department='{}',cTeacher='{}' WHERE  cId = '{}' """.format(
         cName, cDepart, cTeacher, cId)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()

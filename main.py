@@ -1,4 +1,5 @@
 import modules
+import menu
 import os
 
 
@@ -30,13 +31,13 @@ def mainLoop():
     drawMenu()
     while(True):
         cmd = input()
-        if (cmd == 1):
+        if (cmd == '1'):
+            menu.studentMenuLoop()
+        elif (cmd == '2'):
             pass
-        elif (cmd == 2):
+        elif (cmd == '3'):
             pass
-        elif (cmd == 3):
-            pass
-        elif(cmd == 4):
+        elif(cmd == '4'):
             pass
         elif(cmd == 'h'):
             showHelp()
