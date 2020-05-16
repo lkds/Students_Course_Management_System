@@ -23,6 +23,16 @@ def getStudentByID(studentID):
     return db.cur.fetchone()
 
 
+def getStudentBystudentID(studentID):
+    """
+    根据学生ID获取学生
+    """
+    sql = """select * from student where studentNumber = {}""".format(
+        studentID)
+    db.cur.execute(sql)
+    return db.cur.fetchone()
+
+
 def getStudentByName(studentName):
     """
     根据学生姓名获取学生
@@ -40,14 +50,16 @@ def selectCourseByID(studentID, courseID):
     """
     学生选课
     """
-    sql = '''
-        insert into sc values ({},{})
-    '''.format(studentID, courseID)
+    sql = '''insert into sc(studentID,courseID) values ({},{})'''.format(
+        studentID, courseID)
     try:
         db.cur.execute(sql)
         db.conn.commit()
-    except:
+        return True
+    except Exception as err:
         db.conn.rollback()
+        print(err)
+        return False
 
 
 def quitCourseByID(scID):
@@ -106,7 +118,7 @@ def getCourseByID(cId):
     """
     根据id查询课程
     """
-    sql = """select * from course where courseID = '{}'""" .format(cId)
+    sql = """select * from course where courseID = {}""" .format(cId)
     db.cur.execute(sql)
     return db.cur.fetchall()
 
