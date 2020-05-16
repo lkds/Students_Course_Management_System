@@ -27,6 +27,23 @@ def getCoursefromName(cName):
     db.cur.execute(sql)
     return db.cur.fetchall()
 
+def getCoursebyTeacherID(teacherId):
+    """
+    根据教师id查询该老师任课的课程
+    """
+    sql = """select * from course where  teacherId = '{}'""" .format(teacherId)
+    db.cur.execute(sql)
+    return db.cur.fetchall()
+
+def getCoursebyTeacherName(teacherName):
+    """
+    根据老师的姓名模糊查询该老师任课的课程
+    """
+    sql = """select c.* from course c , Teacher t where t.teacherID = c. and teacherName like '%{}%'""" .format(teacherName)
+    db.cur.execute(sql)
+    return db.cur.fetchall()
+
+
 
 ###########################################
 #添加课程
