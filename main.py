@@ -1,4 +1,5 @@
 import modules
+import os
 
 
 def drawMenu():
@@ -10,12 +11,12 @@ def drawMenu():
 |_____|  [___][___]'.__.' \__/  
 """)
     print("""Pilot学生-课程管理系统
-1、学生课程管理
-2、教师课程管理
-3、课程管理
-4、学院课程管理
-输入help查看帮助""")
-    # print(modules.getCourse())
+<1>     学生课程管理
+<2>     教师课程管理
+<3>     课程管理
+<4>     学院课程管理
+<q>     退出
+<h>     帮助""")
 
 
 def showHelp():
@@ -36,8 +37,10 @@ def mainLoop():
             pass
         elif(cmd == 4):
             pass
-        elif(cmd == 'help'):
+        elif(cmd == 'h'):
             showHelp()
+        elif (cmd == 'q'):
+            os._exit(0)
 
 
 if __name__ == '__main__':
