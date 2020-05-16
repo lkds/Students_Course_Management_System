@@ -24,34 +24,12 @@ def getStudentByID(studentID):
     return db.cur.fetchone()
 
 
-def getDepartmentInfo():
-    '''  获取所有学院信息
-    '''
-
-   sql = """select * from Department"""
-   try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
-    return db.cur.fetchall()
-
-def getDepartmentInfo(departmentName):
-   ''' 根据学院名获取学院信息 '''
-   sql = """select * from Department 
-   where departmentName = {} """.format(departmentName)
-   try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
-    return db.cur.fetchall()
 def getStudentByName(studentName):
     """
     根据学生姓名获取学生
     """
     sql = '''
-        select * 
+        select *
         from student
         where studentName like '%{}'
     '''.format(studentName)
@@ -72,11 +50,6 @@ def selectCourseByID(studentID, courseID):
     except:
         db.conn.rollback()
    return db.cur.fetchall(departmentName)
-
-def getDepartmentCourse():
-    ''' 根据学院名获取其开课信息 '''
-   sql = """select * from course 
-   where departmentID = (select departmentID from department where departmentName = {})""".format(departmentName)
 
 
 def quitCourseByID(scID):
@@ -227,6 +200,16 @@ def updateCourse(cId, cName, cDepart, cTeacher):
 
 
 ####### 学院相关 #####
+def getDepartmentCourse():
+    ''' 根据学院名获取其开课信息 '''
+   sql = """select * from course 
+   where departmentID = (select departmentID from department where departmentName = {})""".format(departmentName)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
 def getDepartmentInfo():
     '''  获取所有学院信息
     '''
