@@ -171,9 +171,9 @@ def studentMenuLoop():
     if (student == None):
         print("未找到相关学生！")
         return
-    printHeader(student)
-    printTable([student])
-    studentID = student['studentID']
+    printHeader(student[0])
+    printTable(student)
+    studentID = student[0]['studentID']
     while (True):
         renderStudentMenu()
         cmd = input()
@@ -566,6 +566,15 @@ def allocateCourse(teacherID):
         return
 
 
+def getTeacherCourse(teacherID):
+    course = getCoursebyTeacherID(teacherID)
+    if (len(course) == 0):
+        print('尚无课程！')
+        return
+    printHeader(course[0])
+    printTable(course)
+
+
 def teacherMenuLoop():
     teacher = getTeacher()
     if (len(teacher) == 0):
@@ -573,7 +582,7 @@ def teacherMenuLoop():
         return
     printHeader(teacher[0])
     printTable(teacher)
-    teacherID = input('请输入教师ID')
+    teacherID = input('请输入教师ID:')
     if (teacherID == ''):
         print('输入错误！')
         return
@@ -584,9 +593,9 @@ def teacherMenuLoop():
         printTeacherMenu()
         cmd = input('请输入命令：')
         if (cmd == '1'):
-            pass
+            allocateCourse(teacherID)
         elif (cmd == '2'):
-            pass
+            getTeacherCourse(teacherID)
         elif (cmd == 'q'):
             break
         else:

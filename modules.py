@@ -13,7 +13,7 @@ def generalGet(tbName, row=0, condition='', keys='*'):
     :param keys:[list] 需要获取的字段,空表示所有
     :param condition:[str] 选择条件,''表示无条件
     :param row:[int] 需要的条数，0表示所有 
-    :return [list or dict] 数据列表或单条
+    :return [list] 数据列表
     """
     queryDict = dict()
     queryDict['tbName'] = tbName
@@ -349,7 +349,7 @@ def getCoursebyTeacherID(teacherID):
     #     db.conn.rollback()
     # return db.cur.fetchall()
 
-    return generalGet('course', 0, 'teacherId = {}'.format(teacherID))
+    return generalGet('course', 0, 'teacherID = {}'.format(teacherID))
 
 
 def getCoursebyTeacherName(teacherName):
@@ -372,14 +372,15 @@ def getCoursebycourseCredit(courseCredit):
     """
     根据学分查询课程
     """
-    sql = """select * from course where courseCredit = '{}'""" .format(
-        courseCredit)
-    try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
-    return db.cur.fetchall()
+    # sql = """select * from course where courseCredit = '{}'""" .format(
+    #     courseCredit)
+    # try:
+    #     db.cur.execute(sql)
+    #     db.conn.commit()
+    # except:
+    #     db.conn.rollback()
+    # return db.cur.fetchall()
+    return generalGet('course', 0, 'courseCredit = \'{}\''.format(courseCredit))
 
 # 添加课程
 
@@ -388,51 +389,56 @@ def addNewCourse(courseName, departmentID, teacherID, courseCredit):
     """
     添加课程
     """
-    sql = """insert into course(courseName,departmentID,teacherID,courseCredit) values('{}','{}','{}','{}')""".format(
-        courseName, departmentID, teacherID, courseCredit)
-    try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
+    # sql = """insert into course(courseName,departmentID,teacherID,courseCredit) values('{}','{}','{}','{}')""".format(
+    #     courseName, departmentID, teacherID, courseCredit)
+    # try:
+    #     db.cur.execute(sql)
+    #     db.conn.commit()
+    # except:
+    #     db.conn.rollback()
+    return generalCreate('course', {'courseName': courseName, 'departmentID': courseName, 'teacherID': courseName, 'courseCredit': courseName})
 
 
 def delCourseByID(courseID):
     """
     根据课程id删除课程
     """
-    sql = """DELETE FROM course WHERE  courseID = '{}'""".format(courseID)
-    try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
+    # sql = """DELETE FROM course WHERE  courseID = '{}'""".format(courseID)
+    # try:
+    #     db.cur.execute(sql)
+    #     db.conn.commit()
+    # except:
+    #     db.conn.rollback()
+    return generalDelete('course', 'courseID = {}'.format(courseID))
 
 
 def delCourseByName(courseName):
     """
     根据课程名称删除课程
     """
-    sql = """DELETE FROM course WHERE  courseName like '%{}%'""".format(
-        courseName)
-    try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
+    # sql = """DELETE FROM course WHERE  courseName like '%{}%'""".format(
+    #     courseName)
+    # try:
+    #     db.cur.execute(sql)
+    #     db.conn.commit()
+    # except:
+    #     db.conn.rollback()
+    return generalDelete('course', 'courseName like \'%{}%\''.format(courseName))
 
 
 def updateCourse(courseID, courseName, departmentID, teacherID, courseCredit):
     """
     修改对应id的课程信息
     """
-    sql = """UPDATE course SET courseName='{}',departmentID='{}',teacherID='{}' ,courseCredit = '{}'WHERE  courseID = '{}' """.format(
-        courseName, departmentID, teacherID, courseCredit, courseID)
-    try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
+    # sql = """UPDATE course SET courseName='{}',departmentID='{}',teacherID='{}' ,courseCredit = '{}'WHERE  courseID = '{}' """.format(
+    #     courseName, departmentID, teacherID, courseCredit, courseID)
+    # try:
+    #     db.cur.execute(sql)
+    #     db.conn.commit()
+    # except:
+    #     db.conn.rollback()
+    # return generalUpdate
+    return generalUpdate('course', {'courseName': courseName, 'departmentID': departmentID, ' teacherID': teacherID, 'courseCredit': courseCredit}, 'courseID = {}'.format(courseID))
 
 
 def getTeacher():
@@ -499,7 +505,7 @@ def getDepartmentInfoByName(departmentName):
     #     db.conn.commit()
     # except:
     #     db.conn.rollback()
-    # return db.cur.fetchone()
+    return db.cur.fetchone()
     condition = """departmentName='{}'""".format(departmentName)
     return generalGet('department', 0, condition)
 
