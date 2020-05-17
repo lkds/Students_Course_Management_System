@@ -13,7 +13,7 @@ def generalGet(tbName, row=0, condition='', keys='*'):
     :param keys:[list] 需要获取的字段,空表示所有
     :param condition:[str] 选择条件,''表示无条件
     :param row:[int] 需要的条数，0表示所有 
-    :return [list or dict] 数据列表或单条
+    :return [list] 数据列表
     """
     queryDict = dict()
     queryDict['tbName'] = tbName
@@ -27,8 +27,6 @@ where {condition}
     db.cur.execute(sql)
     if (row == 0):
         return db.cur.fetchall()
-    if (row == 1):
-        return db.cur.fetchone()
     else:
         return db.cur.fetchmany(row)
 
@@ -349,7 +347,7 @@ def getCoursebyTeacherID(teacherID):
     #     db.conn.rollback()
     # return db.cur.fetchall()
 
-    return generalGet('course', 0, 'teacherId = {}'.format(teacherID))
+    return generalGet('course', 0, 'teacherID = {}'.format(teacherID))
 
 
 def getCoursebyTeacherName(teacherName):
