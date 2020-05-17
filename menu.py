@@ -52,3 +52,16 @@ def studentMenuLoop():
         cmd = input()
         if (cmd == '1'):
             selectCourse(student)
+
+
+def renderCourseMenu():
+    print('''
+<1>     查询课程
+<2>     删除课程
+<3>     修改课程信息
+<4>     添加课程
+<q>     返回上级菜单
+    ''')
+
+def courseMenuLoop():
+    
