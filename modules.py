@@ -24,6 +24,16 @@ def getStudentByID(studentID):
     return db.cur.fetchone()
 
 
+def getStudentBystudentNumber(studentNumber):
+    """
+    根据学号获取学生
+    """
+    sql = """select * from student where studentNumber = {}""".format(
+        studentNumber)
+    db.cur.execute(sql)
+    return db.cur.fetchone()
+
+
 def getStudentByName(studentName):
     """
     根据学生姓名获取学生
@@ -41,14 +51,16 @@ def selectCourseByID(studentID, courseID):
     """
     学生选课
     """
-    sql = '''
-        insert into sc values ({},{})
-    '''.format(studentID, courseID)
+    sql = '''insert into sc(studentID,courseID) values ({},{})'''.format(
+        studentID, courseID)
     try:
         db.cur.execute(sql)
         db.conn.commit()
-    except:
+        return True
+    except Exception as e:
         db.conn.rollback()
+        print(e)
+        return False
 
 
 def quitCourseByID(scID):
@@ -92,6 +104,23 @@ def quitCourseBycourseName(courseName):
 
 
 
+def quitCourseByCourseID(studentID, courseID):
+    """
+    根据学生ID和课程ID退课
+    """
+    sql = '''
+        delete from sc where studentID = {} and courseID = {}
+    '''.format(studentID, courseID)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+        return True
+    except Exception as e:
+        db.conn.rollback()
+        print(e)
+        return False
+
+
 def updateGradeByID(scID, grade):
     """
     根据scID更新/添加成绩
@@ -118,6 +147,19 @@ def getStudentAllCourse(studentID):
     db.cur.execute(sql)
     return db.cur.fetchall()
 
+
+def getStudentSelectedCourseByCourseID(studentID, courseID):
+    sql = """select * from sc where studentID = {} and courseID = {}""".format(
+        studentID, courseID)
+    db.cur.execute(sql)
+    return db.cur.fetchone()
+
+
+def getStudentGrade(studentID):
+    sql = """select courseID,grades from sc where studentID = {} and grades != Null""".format(
+        studentID)
+    db.cur.execute(sql)
+    return db.cur.fetchall()
 ###################查询课程#################
 
 
@@ -287,13 +329,13 @@ def getDepartmentId(DepartmentId):
 def getDepartmentInfoByName(departmentName):
     ''' 根据学院名获取学院信息 '''
     sql = """select * from department
-    where departmentName = {} """.format(departmentName)
+    where departmentName = '{}' """.format(departmentName)
     try:
         db.cur.execute(sql)
         db.conn.commit()
     except:
         db.conn.rollback()
-    return db.cur.fetchall()
+    return db.cur.fetchone()
 
 
 def modifyDepartmentInfo(departmentInfo):
@@ -353,7 +395,7 @@ def getDepartmentTeacher(departmentName):
 
 def addStudent(studentInfo):
     sql = """insert into student(departmentID,name,studentNumber,gender,grade,birthday)
-    values({},{},{},{},{},{},{}
+    values({},{},{},{},{},{}
     """.format(studentInfo['departmentID'], studentInfo['name'], studentInfo['studentNumber'], studentInfo['gender'],
                studentInfo['grade'], studentInfo['birthday'])
     try:

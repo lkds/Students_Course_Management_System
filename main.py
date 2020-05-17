@@ -46,7 +46,7 @@ def mainLoop():
         elif (cmd == '3'):
             menu.courseMenuLoop()
         elif(cmd == '4'):
-            pass
+            menu.collegeMenuLoop()
         elif(cmd == 'h'):
             showHelp()
         elif (cmd == 'q'):
