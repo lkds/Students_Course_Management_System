@@ -1,6 +1,6 @@
 
 from modules import *
-
+import datetime
 ########################通用函数###########################
 
 
@@ -21,6 +21,18 @@ def printHeader(data):
     header['grades'] = '成绩'
     header['teacherID'] = '教师ID'
     header['courseName'] = '课程名'
+    header['title'] = '职称'
+    header['teacherNumber'] = '教职工号'
+    header['office'] = '办公室'
+    header['homeAddress'] = '住址'
+    header['courseID'] = '课程号'
+    header['teacherName'] = '姓名'
+    header['courseName'] = '课程名'
+    header['courseCredit'] = '学分'
+    header['departmentID'] = '学院ID'
+    header['departmentName'] = '学院名'
+    header['departmentAddress'] = '学院地址'
+    header['contactInformation'] = '联系方式'
     for k in data.keys():
         print(header[k], '\t', end='')
     print('')
@@ -34,7 +46,10 @@ def printTable(data):
     """
     for item in data:
         for key in item.keys():
-            print(item[key], '\t', end='')
+            if (item[key] == None):
+                print("无", '\t', end='')
+            else:
+                print(item[key], '\t', end='')
         print('')
 
 ########################学生管理###########################
@@ -145,7 +160,7 @@ def printCollegeSearchMenu():
 
 def printCollegeModifyMenu():
     print('''
-<1>     查询学院所有课程
+<1>     修改学院信息
 <2>     添加学生
 <3>     添加老师
 <4>     开除学生
@@ -159,23 +174,25 @@ def collegeMenuLoop():
         学院管理菜单
     '''
     print("/主菜单/学院管理")
+
     print("请输入学院：", end='')
     college = getDepartmentInfoByName(input())
     if (college == None):
         print("不存在该学院！")
         return
 
-    print('''
+    while (True):
+        print("/主菜单/学院管理")
+        print('''
 <1>     查询操作
 <2>     更改操作
 <q>     返回上级菜单
      '''
-          )
-    while (True):
+              )
         cmd = input("请输入菜单项：")
         if (cmd == '1'):
             collegeSearchMenu(college)
-        if (cmd == '2'):
+        elif (cmd == '2'):
             collegeModifyMenu(college)
         elif (cmd == 'q'):
             return
@@ -185,69 +202,84 @@ def collegeSearchMenu(college):
     '''
         学院查询
     '''
-    print("/主菜单/学院管理/学院查询管理")
-    printCollegeSearchMenu()
+
     while (True):
+        print("/主菜单/学院管理/学院查询管理")
+        printCollegeSearchMenu()
         cmd = input("请输入菜单项：")
         if (cmd == '1'):
+            printHeader(college)
             printTable([college])
         elif (cmd == '2'):
-            getDepartmentTeacher(college['departmentName'])
+            teachersInfo = getDepartmentTeacher(college['departmentName'])
+            printHeader(teachersInfo[0])
+            printTable(teachersInfo)
         elif (cmd == '3'):
-            getDepartmentStudent(college['departmentName'])
+            studentsInfo = getDepartmentStudent(college['departmentName'])
+            printHeader(studentsInfo[0])
+            printTable(studentsInfo)
         elif (cmd == '4'):
-            getDepartmentCourse(college['departmentName'])
+            coursesInfo = getDepartmentCourse(college['departmentName'])
+            printHeader(coursesInfo[0])
+            printTable(coursesInfo)
         elif (cmd == 'q'):
-            return
+            break
 
 
-def printKeys(items):
+def printKeys(item):
     '''打印输入设置字段值
     '''
-    for item in items:
-        for key in item.keys():
-            item[key] = input("请为{}输入值".format(key))
+
+    for key in item.keys():
+        print("请为{}输入值：".format(key), end='')
+        if (key == 'birthday'):
+            print("例：2020-5-14")
+            item[key] = datetime.datetime.strptime(input(), '%Y-%m-%d')
+        else:
+            item[key] = input()
+
+    return item
 
 
 def collegeModifyMenu(college):
     '''
         学院修改
     '''
-    print("/主菜单/学院管理/学院修改管理")
-    printCollegeModifyMenu()
+
     while (True):
+        print("/主菜单/学院管理/学院修改管理")
+        printCollegeModifyMenu()
         cmd = input("请输入菜单项：")
         if (cmd == '1'):
-            for key in college:
-                college[key] = input("请为{}输入修改后的值".format(key))
-            printKeys(college)
-            modifyDepartmentInfo(college)
-            print("修改成功")
+            modifiedCo = printKeys(college)
+            modifyDepartmentInfo(modifiedCo)
+
         # 添加学生
         elif (cmd == '2'):
-            # 通过查找一个学生获取其keys
+            # 通过查找一个学生获取其keys   不能改id
             studentID = 1
             student = getStudentByID(studentID)
-            printKeys
-            modifyDepartmentInfo(college)
-            print("添加成功成功")
+            newStudent = printKeys(student)
+            addStudent(newStudent)
+
         # 添加老师
         elif (cmd == '3'):
              # 通过查找一个老师获取其keys
             teacherID = 1
             teacher = getTeacherByID(teacherID)
-            printKeys
-            addTeacher(teacher)
+            newTeacher = printKeys(teacher)
+            addTeacher(newTeacher)
         # 开除学生
         elif (cmd == '4'):
             while (True):
                 print("请输入学生ID：", end='')
                 student = getStudentByID(input())
-                if (college == None):
+                if (student == None):
                     print("不存在该学生！")
+                    break
                 else:
-                    deleteStudent(student['studentID'])
-                    print("开除成功")
+
+                    deleteStudent(student['studentNumber'])
                     break
         # 开除老师
         elif (cmd == '5'):
@@ -256,9 +288,9 @@ def collegeModifyMenu(college):
                 teacher = getTeacherByID(input())
                 if (teacher == None):
                     print("不存在该老师！")
+                    break
                 else:
-                    deleteTeacher(teacher['teacherID'])
-                    print("解雇成功")
+                    deleteTeacher(teacher['teacherNumber'])
                     break
         elif (cmd == 'q'):
             return

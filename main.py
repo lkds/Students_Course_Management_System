@@ -1,11 +1,5 @@
-'''
-@Descripttion: 
-@version: 
-@Author: Paul
-@Date: 2020-05-16 17:54:56
-@LastEditors: Paul
-@LastEditTime: 2020-05-16 22:10:43
-'''
+
+
 import modules
 import menu
 import os
@@ -36,8 +30,9 @@ def showHelp():
 
 
 def mainLoop():
-    drawMenu()
-    while(True):
+
+    while (True):
+        drawMenu()
         cmd = input()
         if (cmd == '1'):
             menu.studentMenuLoop()

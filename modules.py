@@ -234,13 +234,14 @@ def updateCourse(cId, cName, cDepart, cTeacher):
 
 
 def getTeacherByID(teacherID):
-    sql = """select * from teacher where teacherID is {}""".format(teacherID)
+    sql = """select * from teacher where teacherID = {} """.format(
+        teacherID)
     try:
         db.cur.execute(sql)
         db.conn.commit()
     except:
         db.conn.rollback()
-    return db.cur.fetchall()
+    return db.cur.fetchone()
 
 ####### 学院相关 #####
 
@@ -271,17 +272,18 @@ def getDepartmentInfoByName(departmentName):
 
 def modifyDepartmentInfo(departmentInfo):
     '''修改学院信息，参数为dict'''
-    sql = """update department set departmentName = {},
-    departmnetAddress ={}, contactInformation = {}
+    sql = """update department set departmentName = '{}',
+    departmentAddress ='{}', contactInformation = '{}'
     where departmentID = {}
     """.format(departmentInfo['departmentName'], departmentInfo['departmentAddress'], departmentInfo['contactInformation'],
                departmentInfo['departmentID'])
     try:
         db.cur.execute(sql)
         db.conn.commit()
+        print("修改成功")
     except:
         db.conn.rollback()
-    return db.cur.fetchall()
+        print("修改失败")
 
 
 def getDepartmentStudent(departmentName):
@@ -289,7 +291,7 @@ def getDepartmentStudent(departmentName):
 
     sql = """select * from student 
     where departmentID = 
-    (select departmentID from department where departmentName = {})""".format(departmentName)
+    (select departmentID from department where departmentName = '{}')""".format(departmentName)
     try:
         db.cur.execute(sql)
         db.conn.commit()
@@ -303,7 +305,7 @@ def getDepartmentCourse(departmentName):
 
     sql = """select * from course
     where departmentID = 
-    (select departmentID from department where departmentName = {})""".format(departmentName)
+    (select departmentID from department where departmentName = '{}')""".format(departmentName)
     try:
         db.cur.execute(sql)
         db.conn.commit()
@@ -314,7 +316,7 @@ def getDepartmentCourse(departmentName):
 
 def getDepartmentTeacher(departmentName):
     '''  获取学院所有老师 '''
-    sql = """select * from teacher where departmentID = (select departmentID from department where departmentName = {})""".format(
+    sql = """select * from teacher where departmentID = (select departmentID from department where departmentName = '{}')""".format(
         departmentName)
     try:
         db.cur.execute(sql)
@@ -326,38 +328,44 @@ def getDepartmentTeacher(departmentName):
 
 def addStudent(studentInfo):
     sql = """insert into student(departmentID,name,studentNumber,gender,grade,birthday)
-    values({},{},{},{},{},{}
+    values({},{},'{}','{}','{}','{}')
     """.format(studentInfo['departmentID'], studentInfo['name'], studentInfo['studentNumber'], studentInfo['gender'],
                studentInfo['grade'], studentInfo['birthday'])
     try:
         db.cur.execute(sql)
         db.conn.commit()
+        print("添加成功")
     except:
         db.conn.rollback()
+        print("添加失败")
 
 
 def deleteStudent(studentNumber):
     '''删除指定number的学生'''
-    sql = """Delete  from student where studentNumber = {}""".format(
+    sql = """Delete  from student where studentNumber = '{}'""".format(
         studentNumber)
     try:
         db.cur.execute(sql)
         db.conn.commit()
+        print("删除成功")
     except:
         db.conn.rollback()
+        print("删除失败")
 
 
 def addTeacher(teacherInfo):
     '''添加老师,参数为字典'''
     sql = """insert into teacher(departmentID,teacherNumber,birthday,title,gender,office,homeAddress)
-    values({},{},{},{},{},{},{}
+    values('{}','{}','{}','{}','{}','{}','{}')
     """.format(teacherInfo['departmentID'], teacherInfo['teacherNumber'], teacherInfo['birthday'], teacherInfo['title'],
                teacherInfo['gender'], teacherInfo['office'], teacherInfo['homeAddress'])
     try:
         db.cur.execute(sql)
         db.conn.commit()
+        print("添加成功")
     except:
         db.conn.rollback()
+        print("添加失败")
 
 
 def deleteTeacher(teacherID):
@@ -366,5 +374,7 @@ def deleteTeacher(teacherID):
     try:
         db.cur.execute(sql)
         db.conn.commit()
+        print("删除成功")
     except:
         db.conn.rollback()
+        print("删除失败")
