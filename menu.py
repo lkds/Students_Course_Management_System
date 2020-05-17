@@ -113,6 +113,7 @@ def collegeSearchMenu(college):
     printCollegeSearchMenu()
     while (True):
         cmd = input("请输入菜单项：", end='')
+        # 如下分别为打印学员信息  查询学院老师 学生 课程
         if (cmd == '1'):
             printTable(college)
         elif (cmd == '2'):
@@ -125,6 +126,14 @@ def collegeSearchMenu(college):
             return
 
 
+def printKeys(items):
+    '''打印输入设置字段值
+    '''
+    for item in items:
+        for key in item.keys():
+            item[key] = input("请为{}输入值".format(key), end='')
+
+
 def collegeModifyMenu(college):
     '''
         学院修改
@@ -134,15 +143,25 @@ def collegeModifyMenu(college):
     while (True):
         cmd = input("请输入菜单项：", end='')
         if (cmd == '1'):
-            for key in college:
-                college[key] = input("请为{}输入修改后的值".format(key), end='')
+            printKeys(college)
             modifyDepartmentInfo(college)
             print("修改成功")
-
+        # 添加学生
         elif (cmd == '2'):
-            getDepartmentTeacher()
+            # 通过查找一个学生获取其keys
+            studentID = 1
+            student = getStudentByID(studentID)
+            printKeys
+            modifyDepartmentInfo(college)
+            print("添加成功成功")
+        # 添加老师
         elif (cmd == '3'):
-            getDepartmentTeacher()
+             # 通过查找一个老师获取其keys
+            teacherID = 1
+            teacher = getTeacherByID(teacherID)
+            printKeys
+            addTeacher(teacher)
+        # 开除学生
         elif (cmd == '4'):
             while (True):
                 print("请输入学生ID：", end='')
@@ -153,6 +172,7 @@ def collegeModifyMenu(college):
                     deleteStudent(student['studentID'])
                     print("开除成功")
                     break
+        # 开除老师
         elif (cmd == '5'):
             while (True):
                 print("请输入老师ID：", end='')
