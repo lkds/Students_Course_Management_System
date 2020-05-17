@@ -76,6 +76,33 @@ def quitCourseByID(scID):
     except:
         db.conn.rollback()
 
+def quitCourseBycourseID(courseID):
+    '''
+    根据课程的id删除学生的选课记录
+    '''
+    sql = '''
+        delete from sc where courseID = '{}' 
+    '''.format(courseID)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+
+def quitCourseBycourseName(courseName):
+    '''
+    根据课程的名称删除学神的选课记录
+    '''
+    sql = '''
+        delete from sc in (select sc.* from sc,course where sc.courseID = course.ID and course.courseName = '{}') 
+    '''.format(courseName)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+
+
 
 def quitCourseByCourseID(studentID, courseID):
     """
@@ -141,25 +168,37 @@ def getCourse():
     获取所有课程
     """
     sql = """select * from course"""
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
     return db.cur.fetchall()
 
 
-def getCourseByID(cId):
+def getCourseByID(courseID):
     """
     根据id查询课程
     """
-    sql = """select * from course where courseID = {}""" .format(cId)
-    db.cur.execute(sql)
+    sql = """select * from course where courseID = '{}'""" .format(courseID)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
     return db.cur.fetchall()
 
 
-def getCourseByName(cName):
+def getCourseByName(courseName):
     """
     根据课程名字模糊查询课程
     """
-    sql = """select * from course where  cName like '%{}%'""" .format(cName)
-    db.cur.execute(sql)
+    sql = """select * from course where  courseName like '%{}%'""" .format(courseName)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
     return db.cur.fetchall()
 
 
@@ -168,7 +207,11 @@ def getCoursebyTeacherID(teacherId):
     根据教师id查询该老师任课的课程
     """
     sql = """select * from course where  teacherId = '{}'""" .format(teacherId)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
     return db.cur.fetchall()
 
 
@@ -178,17 +221,32 @@ def getCoursebyTeacherName(teacherName):
     """
     sql = """select c.* from course c , Teacher t where t.teacherID = c. and teacherName like '%{}%'""" .format(
         teacherName)
-    db.cur.execute(sql)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
     return db.cur.fetchall()
 
+def getCoursebycourseCredit(courseCredit):
+    """
+    根据学分查询课程
+    """
+    sql = """select * from course where courseCredit = '{}'""" .format(courseCredit)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
 
 # 添加课程
-def addNewCourse(cName, cDepart, cTeacher):
+def addNewCourse(courseName, departmentID, teacherID,courseCredit):
     """
     添加课程
     """
-    sql = '''insert into course(courseName,departmentID,teacherID) values('{}',{},{})'''.format(
-        cName, cDepart, cTeacher)
+    sql = """insert into course(courseName,departmentID,teacherID,courseCredit) values('{}','{}','{}','{}')""".format(
+        courseName, departmentID, teacherID,courseCredit)
     try:
         db.cur.execute(sql)
         db.conn.commit()
@@ -196,11 +254,11 @@ def addNewCourse(cName, cDepart, cTeacher):
         db.conn.rollback()
 
 
-def delCourseByID(cId):
+def delCourseByID(courseID):
     """
     根据课程id删除课程
     """
-    sql = """DELETE FROM course WHERE  cId = '{}'""".format(cId)
+    sql = """DELETE FROM course WHERE  courseID = '{}'""".format(courseID)
     try:
         db.cur.execute(sql)
         db.conn.commit()
@@ -208,11 +266,11 @@ def delCourseByID(cId):
         db.conn.rollback()
 
 
-def delCourseByName(cName):
+def delCourseByName(courseName):
     """
     根据课程名称删除课程
     """
-    sql = """DELETE FROM course WHERE  courseName like '%{}%'""".format(cName)
+    sql = """DELETE FROM course WHERE  courseName like '%{}%'""".format(courseName)
     try:
         db.cur.execute(sql)
         db.conn.commit()
@@ -220,12 +278,12 @@ def delCourseByName(cName):
         db.conn.rollback()
 
 
-def updateCourse(cId, cName, cDepart, cTeacher):
+def updateCourse(courseID, courseName, departmentID, teacherID,courseCredit):
     """
     修改对应id的课程信息
     """
-    sql = """UPDATE course SET courseName='{}',department='{}',cTeacher='{}' WHERE  cId = '{}' """.format(
-        cName, cDepart, cTeacher, cId)
+    sql = """UPDATE course SET courseName='{}',departmentID='{}',teacherID='{}' ,courseCredit = '{}'WHERE  courseID = '{}' """.format(
+        courseName, departmentID, teacherID, courseCredit,courseID)
     try:
         db.cur.execute(sql)
         db.conn.commit()
@@ -257,6 +315,17 @@ def getDepartmentInfo():
         db.conn.rollback()
     return db.cur.fetchall()
 
+def getDepartmentId(DepartmentId):
+    '''
+    根据学院id查找学院
+    '''
+    sql = """select * from department WHERE DepartmentId = '{}'""".format(DepartmentId)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
 
 def getDepartmentInfoByName(departmentName):
     ''' 根据学院名获取学院信息 '''

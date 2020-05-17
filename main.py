@@ -39,7 +39,7 @@ def mainLoop():
         elif (cmd == '2'):
             pass
         elif (cmd == '3'):
-            pass
+            menu.courseMenuLoop()
         elif(cmd == '4'):
             menu.collegeMenuLoop()
         elif(cmd == 'h'):
