@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2020/5/16 20:09:59                           */
+/* Created on:     2020/5/17 10:04:42                           */
 /*==============================================================*/
 
 
@@ -23,6 +23,7 @@ create table course
    teacherID            int,
    departmentID         int,
    courseName           varchar(64),
+   courseCredit         double,
    primary key (courseID)
 );
 
@@ -43,11 +44,12 @@ create table department
 /*==============================================================*/
 create table sc
 (
-   scID                 int not null,
+   scID                 int not null auto_increment,
    courseID             int,
    studentID            int,
    grades               int,
-   primary key (scID)
+   primary key (scID),
+   unique key AK_unique_key (courseID, studentID)
 );
 
 /*==============================================================*/

@@ -4,6 +4,42 @@ from modules import *
 ########################通用函数###########################
 
 
+def my_align(_string, _length, _type='L'):
+    """
+    中英文混合字符串对齐函数
+    my_align(_string, _length[, _type]) -> str
+
+    :param _string:[str]需要对齐的字符串
+    :param _length:[int]对齐长度
+    :param _type:[str]对齐方式（'L'：默认，左对齐；'R'：右对齐；'C'或其他：居中对齐）
+    :return:[str]输出_string的对齐结果
+    """
+    _str_len = len(_string)  # 原始字符串长度（汉字算1个长度）
+    for _char in _string:  # 判断字符串内汉字的数量，有一个汉字增加一个长度
+        if u'\u4e00' <= _char <= u'\u9fa5':  # 判断一个字是否为汉字（这句网上也有说是“ <= u'\u9ffff' ”的）
+            _str_len += 1
+    _space = _length-_str_len  # 计算需要填充的空格数
+    if _type == 'L':  # 根据对齐方式分配空格
+        _left = 0
+        _right = _space
+    elif _type == 'R':
+        _left = _space
+        _right = 0
+    else:
+        _left = _space//2
+        _right = _space-_left
+    return ' '*_left + _string + ' '*_right
+
+
+def alignPrint(data):
+    """
+    :data-list
+    """
+    for item in data:
+        print('{}'.format(my_align(str(item), 20, 'C')), end='')
+    print('')
+
+
 def printHeader(data):
     """
     打印表头
@@ -21,9 +57,11 @@ def printHeader(data):
     header['grades'] = '成绩'
     header['teacherID'] = '教师ID'
     header['courseName'] = '课程名'
+    header['courseCredit'] = '学分'
+    content = []
     for k in data.keys():
-        print(header[k], '\t', end='')
-    print('')
+        content.append(header[k])
+    alignPrint(content)
 
 
 def printTable(data):
@@ -34,7 +72,7 @@ def printTable(data):
     """
     for item in data:
         for key in item.keys():
-            print(item[key], '\t', end='')
+            print('{}'.format(my_align(str(item[key]), 20, 'C')), end='')
         print('')
 
 ########################学生管理###########################
@@ -55,9 +93,12 @@ def selectCourse(studentID):
     选课功能
     """
     course = getCourse()
-    print("课程编号\t学院\t老师\t名称")
+    if (len(course) == 0):
+        print("暂无课程")
+        return
+    printHeader(course[0])
     printTable(course)
-    print('请输入课程编号：\t', end='')
+    print('请输入课程编号：', end='')
     courseID = input()
     if(getCourseByID(courseID)):
         if(selectCourseByID(studentID, int(courseID))):
@@ -113,9 +154,9 @@ def studentMenuLoop():
         return
     printHeader(student)
     printTable([student])
-    renderStudentMenu()
     studentID = student['studentID']
     while (True):
+        renderStudentMenu()
         cmd = input()
         if (cmd == '1'):
             selectCourse(studentID)
