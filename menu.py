@@ -394,7 +394,9 @@ def collegeMenuLoop():
         学院管理菜单
     '''
     print("/主菜单/学院管理")
-
+    colleges = getDepartmentInfo()
+    printHeader(colleges[0])
+    printTable(colleges)
     print("请输入学院：", end='')
     college = getDepartmentInfoByName(input())
     if (college == None):
@@ -427,19 +429,20 @@ def collegeSearchMenu(college):
         print("/主菜单/学院管理/学院查询管理")
         printCollegeSearchMenu()
         cmd = input("请输入菜单项：")
+        depart = college[0]
         if (cmd == '1'):
-            printHeader(college)
-            printTable([college])
+            printHeader(depart)
+            printTable(college)
         elif (cmd == '2'):
-            teachersInfo = getDepartmentTeacher(college['departmentName'])
+            teachersInfo = getDepartmentTeacher(depart['departmentName'])
             printHeader(teachersInfo[0])
             printTable(teachersInfo)
         elif (cmd == '3'):
-            studentsInfo = getDepartmentStudent(college['departmentName'])
+            studentsInfo = getDepartmentStudent(depart['departmentName'])
             printHeader(studentsInfo[0])
             printTable(studentsInfo)
         elif (cmd == '4'):
-            coursesInfo = getDepartmentCourse(college['departmentName'])
+            coursesInfo = getDepartmentCourse(depart['departmentName'])
             printHeader(coursesInfo[0])
             printTable(coursesInfo)
         elif (cmd == 'q'):
@@ -454,7 +457,11 @@ def printKeys(item):
         print("请为{}输入值：".format(key), end='')
         if (key == 'birthday'):
             print("例：2020-5-14")
-            item[key] = datetime.datetime.strptime(input(), '%Y-%m-%d')
+        #     item[key] =datetime.datetime.strptime(input(), '%Y-%m-%d')
+        # else:
+        if (key == 'departmentID' or key == 'teacherID' or key == 'studentID'):
+            item[key] = int(input())
+
         else:
             item[key] = input()
 
@@ -471,46 +478,61 @@ def collegeModifyMenu(college):
         printCollegeModifyMenu()
         cmd = input("请输入菜单项：")
         if (cmd == '1'):
-            modifiedCo = printKeys(college)
-            modifyDepartmentInfo(modifiedCo)
+            modifiedCo = printKeys(college[0])
+            if (modifyDepartmentInfo(modifiedCo)):
+                print('修改成功')
+            else:
+                print('修改失败')
 
         # 添加学生
         elif (cmd == '2'):
-            # 通过查找一个学生获取其keys   不能改id
+            # 通过查找一个学生获取其keys
             studentID = 1
-            student = getStudentByID(studentID)
+            student = getStudentByID(studentID)[0]
             newStudent = printKeys(student)
-            addStudent(newStudent)
+            if (addStudent(newStudent)):
+                print('添加成功')
+            else:
+                print('添加失败')
 
         # 添加老师
         elif (cmd == '3'):
             # 通过查找一个老师获取其keys
             teacherID = 1
-            teacher = getTeacherByID(teacherID)
+            teacher = getTeacherByID(teacherID)[0]
             newTeacher = printKeys(teacher)
-            addTeacher(newTeacher)
+            if (addTeacher(newTeacher)):
+                print('添加成功')
+            else:
+                print('添加失败')
         # 开除学生
         elif (cmd == '4'):
             while (True):
                 print("请输入学生ID：", end='')
-                student = getStudentByID(input())
+                student = getStudentByID(input())[0]
                 if (student == None):
                     print("不存在该学生！")
                     break
                 else:
-
-                    deleteStudent(student['studentNumber'])
+                    if (deleteStudent(student['studentID'])):
+                        print('删除成功')
+                    else:
+                        print('删除失败')
                     break
         # 开除老师
         elif (cmd == '5'):
             while (True):
                 print("请输入老师ID：", end='')
-                teacher = getTeacherByID(input())
+                teacher = getTeacherByID(input())[0]
                 if (teacher == None):
                     print("不存在该老师！")
                     break
                 else:
-                    deleteTeacher(teacher['teacherNumber'])
+                    if (deleteTeacher(teacher['teacherID'])):
+                        print('删除成功')
+                    else:
+                        print('删除失败')
+                    break
                     break
         elif (cmd == 'q'):
             return
