@@ -201,6 +201,14 @@ def collegeSearchMenu(college):
             return
 
 
+def printKeys(items):
+    '''打印输入设置字段值
+    '''
+    for item in items:
+        for key in item.keys():
+            item[key] = input("请为{}输入值".format(key))
+
+
 def collegeModifyMenu(college):
     '''
         学院修改
@@ -212,13 +220,25 @@ def collegeModifyMenu(college):
         if (cmd == '1'):
             for key in college:
                 college[key] = input("请为{}输入修改后的值".format(key))
+            printKeys(college)
             modifyDepartmentInfo(college)
             print("修改成功")
-
+        # 添加学生
         elif (cmd == '2'):
-            getDepartmentTeacher(college)
+            # 通过查找一个学生获取其keys
+            studentID = 1
+            student = getStudentByID(studentID)
+            printKeys
+            modifyDepartmentInfo(college)
+            print("添加成功成功")
+        # 添加老师
         elif (cmd == '3'):
-            getDepartmentTeacher(college)
+             # 通过查找一个老师获取其keys
+            teacherID = 1
+            teacher = getTeacherByID(teacherID)
+            printKeys
+            addTeacher(teacher)
+        # 开除学生
         elif (cmd == '4'):
             while (True):
                 print("请输入学生ID：", end='')
@@ -229,6 +249,7 @@ def collegeModifyMenu(college):
                     deleteStudent(student['studentID'])
                     print("开除成功")
                     break
+        # 开除老师
         elif (cmd == '5'):
             while (True):
                 print("请输入老师ID：", end='')
