@@ -1,3 +1,11 @@
+'''
+@Descripttion: 
+@version: 
+@Author: Paul
+@Date: 2020-05-16 17:54:56
+@LastEditors: Paul
+@LastEditTime: 2020-05-16 22:10:43
+'''
 import modules
 import menu
 import os
@@ -36,7 +44,7 @@ def mainLoop():
         elif (cmd == '2'):
             pass
         elif (cmd == '3'):
-            pass
+            menu.courseMenuLoop()
         elif(cmd == '4'):
             pass
         elif(cmd == 'h'):
