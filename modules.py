@@ -1,3 +1,4 @@
+
 from DB import DB
 
 db = DB()
@@ -23,12 +24,12 @@ def getStudentByID(studentID):
     return db.cur.fetchone()
 
 
-def getStudentBystudentID(studentID):
+def getStudentBystudentNumber(studentNumber):
     """
-    根据学生ID获取学生
+    根据学号获取学生
     """
     sql = """select * from student where studentNumber = {}""".format(
-        studentID)
+        studentNumber)
     db.cur.execute(sql)
     return db.cur.fetchone()
 
@@ -38,7 +39,7 @@ def getStudentByName(studentName):
     根据学生姓名获取学生
     """
     sql = '''
-        select * 
+        select *
         from student
         where studentName like '%{}'
     '''.format(studentName)
@@ -56,9 +57,9 @@ def selectCourseByID(studentID, courseID):
         db.cur.execute(sql)
         db.conn.commit()
         return True
-    except Exception as err:
+    except Exception as e:
         db.conn.rollback()
-        print(err)
+        print(e)
         return False
 
 
@@ -74,6 +75,23 @@ def quitCourseByID(scID):
         db.conn.commit()
     except:
         db.conn.rollback()
+
+
+def quitCourseByCourseID(studentID, courseID):
+    """
+    根据学生ID和课程ID退课
+    """
+    sql = '''
+        delete from sc where studentID = {} and courseID = {}
+    '''.format(studentID, courseID)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+        return True
+    except Exception as e:
+        db.conn.rollback()
+        print(e)
+        return False
 
 
 def updateGradeByID(scID, grade):
@@ -102,6 +120,19 @@ def getStudentAllCourse(studentID):
     db.cur.execute(sql)
     return db.cur.fetchall()
 
+
+def getStudentSelectedCourseByCourseID(studentID, courseID):
+    sql = """select * from sc where studentID = {} and courseID = {}""".format(
+        studentID, courseID)
+    db.cur.execute(sql)
+    return db.cur.fetchone()
+
+
+def getStudentGrade(studentID):
+    sql = """select courseID,grades from sc where studentID = {} and grades != Null""".format(
+        studentID)
+    db.cur.execute(sql)
+    return db.cur.fetchall()
 ###################查询课程#################
 
 
@@ -181,7 +212,7 @@ def delCourseByName(cName):
     """
     根据课程名称删除课程
     """
-    sql = """DELETE FROM course WHERE  cName like '%{}%'""".format(cName)
+    sql = """DELETE FROM course WHERE  courseName like '%{}%'""".format(cName)
     try:
         db.cur.execute(sql)
         db.conn.commit()
@@ -195,6 +226,143 @@ def updateCourse(cId, cName, cDepart, cTeacher):
     """
     sql = """UPDATE course SET courseName='{}',department='{}',cTeacher='{}' WHERE  cId = '{}' """.format(
         cName, cDepart, cTeacher, cId)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+
+
+def getTeacherByID(teacherID):
+    sql = """select * from teacher where teacherID is {}""".format(teacherID)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
+
+####### 学院相关 #####
+
+
+def getDepartmentInfo():
+    '''  获取所有学院信息
+    '''
+    sql = """select * from department"""
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
+
+
+def getDepartmentInfoByName(departmentName):
+    ''' 根据学院名获取学院信息 '''
+    sql = """select * from department
+    where departmentName = '{}' """.format(departmentName)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchone()
+
+
+def modifyDepartmentInfo(departmentInfo):
+    '''修改学院信息，参数为dict'''
+    sql = """update department set departmentName = {},
+    departmnetAddress ={}, contactInformation = {}
+    where departmentID = {}
+    """.format(departmentInfo['departmentName'], departmentInfo['departmentAddress'], departmentInfo['contactInformation'],
+               departmentInfo['departmentID'])
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
+
+
+def getDepartmentStudent(departmentName):
+    '''  获取学院所有学生 '''
+
+    sql = """select * from student 
+    where departmentID = 
+    (select departmentID from department where departmentName = {})""".format(departmentName)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
+
+
+def getDepartmentCourse(departmentName):
+    '''  获取学院所有课程 '''
+
+    sql = """select * from course
+    where departmentID = 
+    (select departmentID from department where departmentName = {})""".format(departmentName)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
+
+
+def getDepartmentTeacher(departmentName):
+    '''  获取学院所有老师 '''
+    sql = """select * from teacher where departmentID = (select departmentID from department where departmentName = {})""".format(
+        departmentName)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+    return db.cur.fetchall()
+
+
+def addStudent(studentInfo):
+    sql = """insert into student(departmentID,name,studentNumber,gender,grade,birthday)
+    values({},{},{},{},{},{}
+    """.format(studentInfo['departmentID'], studentInfo['name'], studentInfo['studentNumber'], studentInfo['gender'],
+               studentInfo['grade'], studentInfo['birthday'])
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+
+
+def deleteStudent(studentNumber):
+    '''删除指定number的学生'''
+    sql = """Delete  from student where studentNumber = {}""".format(
+        studentNumber)
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+
+
+def addTeacher(teacherInfo):
+    '''添加老师,参数为字典'''
+    sql = """insert into teacher(departmentID,teacherNumber,birthday,title,gender,office,homeAddress)
+    values({},{},{},{},{},{},{}
+    """.format(teacherInfo['departmentID'], teacherInfo['teacherNumber'], teacherInfo['birthday'], teacherInfo['title'],
+               teacherInfo['gender'], teacherInfo['office'], teacherInfo['homeAddress'])
+    try:
+        db.cur.execute(sql)
+        db.conn.commit()
+    except:
+        db.conn.rollback()
+
+
+def deleteTeacher(teacherID):
+    '''删除指定ID的老师'''
+    sql = """Delete  from teacher where teacherID = {}""".format(teacherID)
     try:
         db.cur.execute(sql)
         db.conn.commit()
