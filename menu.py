@@ -275,7 +275,7 @@ def courseDeleteMenu():
         print("请输入菜单项:", end='')
         cmd = input()
         if(cmd == '1'):  # 按照课程id删除课程
-            print("请输入需要查询的课程的id:", end='')
+            print("请输入需要删除的课程的id:", end='')
             courseID = input()
             course = getCourseByID(courseID)
             if(len(course) == 0):
@@ -284,7 +284,7 @@ def courseDeleteMenu():
                 delCourseByID(courseID)
                 quitCourseBycourseID(courseID)  # 同时删除学生的选课记录
         elif (cmd == '2'):  # 按课程名称删除课程
-            print("请输入需要查询的课程的任课老师姓名:", end='')
+            print("请输入需要删除的课程的任课老师姓名:", end='')
             courseName = input()
             course = getCourseByName(courseName)
             if(len(course) == 0):
