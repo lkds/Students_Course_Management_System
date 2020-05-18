@@ -166,7 +166,7 @@ def getSelectedCourseGrade(studentID):
 
 
 def studentMenuLoop():
-    print("请输入学生学号：", end='')
+    print("请输入学生ID：", end='')
     student = getStudentByID(input())
     if (student == None):
         print("未找到相关学生！")
@@ -234,26 +234,32 @@ def courseSearchMenu():
         cmd = input()
         if (cmd == '1'):  # 查询全部
             course = getCourse()
+            printHeader(course[0])
             printTable(course)
         elif (cmd == '2'):  # 按课程id查询
             print("请输入需要查询的课程id:", end='')
             course = getCourseByID(input())
+            printHeader(course[0])
             printTable(course)
         elif (cmd == '3'):  # 按课程名称查询
             print("请输入需要查询的课程的名称:", end='')
             course = getCourseByName(input())
+            printHeader(course[0])
             printTable(course)
         elif (cmd == '4'):  # 按任课老师id查询
             print("请输入需要查询的课程的任课老师id:", end='')
             course = getCoursebyTeacherID(input())
+            printHeader(course[0])
             printTable(course)
         elif (cmd == '5'):  # 按照任课老师姓名查询
             print("请输入需要查询的课程的任课老师姓名:", end='')
             course = getCoursebyTeacherName(input())
+            printHeader(course[0])
             printTable(course)
         elif (cmd == '6'):  # 按照学分查询
             print("请输入课程学分:", end='')
             course = getCoursebycourseCredit(input())
+            printHeader(course[0])
             printTable(course)
         elif (cmd == 'q'):
             return
@@ -269,7 +275,7 @@ def courseDeleteMenu():
         print("请输入菜单项:", end='')
         cmd = input()
         if(cmd == '1'):  # 按照课程id删除课程
-            print("请输入需要查询的课程的id:", end='')
+            print("请输入需要删除的课程的id:", end='')
             courseID = input()
             course = getCourseByID(courseID)
             if(len(course) == 0):
@@ -278,7 +284,7 @@ def courseDeleteMenu():
                 delCourseByID(courseID)
                 quitCourseBycourseID(courseID)  # 同时删除学生的选课记录
         elif (cmd == '2'):  # 按课程名称删除课程
-            print("请输入需要查询的课程的任课老师姓名:", end='')
+            print("请输入需要删除的课程的任课老师姓名:", end='')
             courseName = input()
             course = getCourseByName(courseName)
             if(len(course) == 0):
@@ -397,8 +403,8 @@ def collegeMenuLoop():
     colleges = getDepartmentInfo()
     printHeader(colleges[0])
     printTable(colleges)
-    print("请输入学院：", end='')
-    college = getDepartmentInfoByName(input())
+    print("请输入学院ID：", end='')
+    college = getDepartmentId(input())
     if (college == None):
         print("不存在该学院！")
         return
@@ -544,13 +550,13 @@ def printTeacherMenu():
     print('''
 <1>     分配课程
 <2>     查询课程
-<3>     返回上级菜单
+<q>     返回上级菜单
     ''')
 
 
 def allocateCourse(teacherID):
     teacher = getTeacherByID(teacherID)
-    deptID = teacher['departmentID']
+    deptID = teacher[0]['departmentID']
     course = getDepartmentCourse(deptID)
     if (len(course) == 0):
         print('暂无课程！')
