@@ -397,8 +397,8 @@ def collegeMenuLoop():
     colleges = getDepartmentInfo()
     printHeader(colleges[0])
     printTable(colleges)
-    print("请输入学院：", end='')
-    college = getDepartmentInfoByName(input())
+    print("请输入学院ID：", end='')
+    college = getDepartmentId(input())
     if (college == None):
         print("不存在该学院！")
         return
@@ -544,13 +544,13 @@ def printTeacherMenu():
     print('''
 <1>     分配课程
 <2>     查询课程
-<3>     返回上级菜单
+<q>     返回上级菜单
     ''')
 
 
 def allocateCourse(teacherID):
     teacher = getTeacherByID(teacherID)
-    deptID = teacher['departmentID']
+    deptID = teacher[0]['departmentID']
     course = getDepartmentCourse(deptID)
     if (len(course) == 0):
         print('暂无课程！')
