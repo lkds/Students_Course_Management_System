@@ -442,13 +442,14 @@ def updateCourse(courseID, courseName, departmentID, teacherID, courseCredit):
 
 
 def getTeacher():
-    sql = """select * from teacher"""
-    try:
-        db.cur.execute(sql)
-        db.conn.commit()
-    except:
-        db.conn.rollback()
-    return db.cur.fetchall()
+    # sql = """select * from teacher"""
+    # try:
+    #     db.cur.execute(sql)
+    #     db.conn.commit()
+    # except:
+    #     db.conn.rollback()
+    # return db.cur.fetchall()
+    return generalGet('teacher',0)
 
 
 def getTeacherByID(teacherID):
@@ -505,7 +506,7 @@ def getDepartmentInfoByName(departmentName):
     #     db.conn.commit()
     # except:
     #     db.conn.rollback()
-    return db.cur.fetchone()
+    # return db.cur.fetchone()
     condition = """departmentName='{}'""".format(departmentName)
     return generalGet('department', 0, condition)
 
