@@ -533,13 +533,11 @@ def collegeModifyMenu(college):
                 if (teacher == None):
                     print("不存在该老师！")
                     break
+                if (deleteTeacher(teacher['teacherID'])):
+                    print('删除成功')
                 else:
-                    if (deleteTeacher(teacher['teacherID'])):
-                        print('删除成功')
-                    else:
-                        print('删除失败')
-                    break
-                    break
+                    print('删除失败')
+
         elif (cmd == 'q'):
             return
 
