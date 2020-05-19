@@ -136,7 +136,7 @@ def getStudentByName(studentName):
     """
     根据学生姓名获取学生
     """
-    return generalGet('student', 0, 'studentName like %'+studentName)
+    return generalGet('student', 0, 'name like \'%{}%\''.format(studentName))
 
 
 def selectCourseByID(studentID, courseID):
@@ -200,8 +200,10 @@ def getStudentSelectedCourseByCourseID(studentID, courseID):
 
 
 def getStudentGrade(studentID):
-
-    return generalGet('sc', 0, 'studentID = {} and grades != Null'.format(studentID), ['courseID', 'grades'])
+    """
+    获取成绩并计算GPA
+    """
+    return generalGet('sc,course', 0, 'studentID = {} and course.courseID = sc.courseID and grades is not Null'.format(studentID), ['sc.courseID as courseID', 'grades', 'courseName', 'courseCredit'])
 ###################查询课程#################
 
 
@@ -258,7 +260,7 @@ def addNewCourse(courseName, departmentID, teacherID, courseCredit):
     """
     添加课程
     """
-    return generalCreate('course', {'courseName': courseName, 'departmentID': courseName, 'teacherID': courseName, 'courseCredit': courseName})
+    return generalCreate('course', {'courseName': courseName, 'departmentID': departmentID,  'teacherID': teacherID, 'courseCredit': courseCredit})
 
 
 def delCourseByID(courseID):
@@ -275,11 +277,11 @@ def delCourseByName(courseName):
     return generalDelete('course', 'courseName like \'%{}%\''.format(courseName))
 
 
-def updateCourse(courseID, courseName, departmentID, teacherID, courseCredit):
+def updateCourse(newCourse):
     """
     修改对应id的课程信息
     """
-    return generalUpdate('course', {'courseName': courseName, 'departmentID': departmentID, ' teacherID': teacherID, 'courseCredit': courseCredit}, 'courseID = {}'.format(courseID))
+    return generalUpdate('course', newCourse, 'courseID = {}'.format(newCourse['courseID']))
 
 
 def getTeacher():
@@ -297,12 +299,13 @@ def getTeacherByID(teacherID):
 
 
 def getDepartmentInfo():
-    '''  获取所有学院信息
+    ''' 
+    获取所有学院信息
     '''
     return generalGet('department', 0, keys=['departmentID', 'departmentName'])
 
 
-def getDepartmentId(departmentId):
+def getDepartmentById(departmentId):
     '''
     根据学院id查找学院
     '''
@@ -310,10 +313,10 @@ def getDepartmentId(departmentId):
     return generalGet('department', 0, condition)
 
 
-def getDepartmentInfoByName(departmentName):
+def getDepartmentByName(departmentName):
     ''' 根据学院名获取学院信息 '''
 
-    condition = """departmentName='{}'""".format(departmentName)
+    condition = """departmentName like '%{}%'""".format(departmentName)
     return generalGet('department', 0, condition)
 
 
@@ -324,26 +327,26 @@ def modifyDepartmentInfo(departmentInfo):
     return generalUpdate('department', departmentInfo, condition)
 
 
-def getDepartmentStudent(departmentName):
+def getDepartmentStudent(departmentID):
     '''  获取学院所有学生 '''
 
-    condition = """departmentID=(select departmentID from department where departmentName = '{}')""".format(
-        departmentName)
+    condition = """departmentID = '{}' """.format(
+        departmentID)
     return generalGet('student', 0, condition)
 
 
-def getDepartmentCourse(departmentName):
+def getDepartmentCourse(departmentID):
     '''  获取学院所有课程 '''
 
-    condition = """departmentID=(select departmentID from department where departmentName = '{}')""".format(
-        departmentName)
+    condition = """departmentID = '{}' """.format(
+        departmentID)
     return generalGet('course', 0, condition)
 
 
-def getDepartmentTeacher(departmentName):
+def getDepartmentTeacher(departmentID):
     '''  获取学院所有老师 '''
-    condition = """departmentID=(select departmentID from department where departmentName = '{}')""".format(
-        departmentName)
+    condition = """departmentID = '{}' """.format(
+        departmentID)
     return generalGet('teacher', 0, condition)
 
 
@@ -368,3 +371,12 @@ def deleteTeacher(teacherID):
     # '''删除指定ID的老师'''
     condition = 'teacherID={}'.format(teacherID)
     return generalDelete('teacher', condition)
+
+
+#########################教师########################
+def getTeacherByName(name):
+    return generalGet('teacher', 0, 'teacherName like \'%{}%\''.format(name))
+
+
+def getTeacherByTeacherNumber(No):
+    return generalGet('teacher', 0, 'teacherNumber = {}'.format(No))

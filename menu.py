@@ -1,6 +1,7 @@
 
 from modules import *
 import datetime
+from copy import deepcopy
 ########################通用函数###########################
 
 
@@ -83,7 +84,37 @@ def printTable(data):
         for key in item.keys():
             print('{}'.format(my_align(str(item[key]), 10, 'C')), end='')
         print('')
+    print('')
 
+
+def printNav(nav):
+    """
+    :param nav-[list] 导航数组，['主菜单'，'课程管理','增加课程']
+    """
+    print('-------------------------', end='')
+    print('/', end='')
+    print('/'.join(nav), end='')
+    print('-------------------------')
+
+
+def printKeys(item):
+    '''
+    获取修改值
+    :param item=[dict] 原数据
+    :return [dict] 新数据
+    '''
+
+    for key in item.keys():
+        if (key != list(item.keys())[0]):
+            print("请为{}输入值(当前：{},回车保持不变)：".format(key, item[key]), end='')
+            if (key == 'birthday'):
+                print("例：2020-5-14")
+            #     item[key] =datetime.datetime.strptime(input(), '%Y-%m-%d')
+            # else:
+            val = input()
+            if(val != ''):
+                item[key] = val
+    return item
 ########################学生管理###########################
 
 
@@ -97,11 +128,13 @@ def renderStudentMenu():
     ''')
 
 
-def selectCourse(studentID):
+def selectCourse(studentID, nav):
     """
     选课功能
     """
-    print('/主菜单/学生管理/选课')
+    newNav = deepcopy(nav)
+    newNav.append('选课')
+    printNav(newNav)
     course = getCourse()
     if (len(course) == 0):
         print("暂无课程")
@@ -121,8 +154,11 @@ def selectCourse(studentID):
         print("课程输入错误！")
 
 
-def getSelectedCourse(studentID):
-    print('/主菜单/学生管理/查询选课结果')
+def getSelectedCourse(studentID, nav=None):
+    if (nav):
+        newNav = deepcopy(nav)
+        newNav.append('选课结果')
+        printNav(newNav)
     course = getStudentAllCourse(studentID)
     if(course):
         printHeader(course[0])
@@ -131,8 +167,10 @@ def getSelectedCourse(studentID):
         print("无记录！")
 
 
-def quitSelectedCourse(studentID):
-    print('/主菜单/学生管理/退课')
+def quitSelectedCourse(studentID, nav):
+    newNav = deepcopy(nav)
+    newNav.append('退课')
+    printNav(newNav)
     getSelectedCourse(studentID)
     print('请输入退选课程ID：', end='')
     courseIDStr = input()
@@ -152,20 +190,34 @@ def quitSelectedCourse(studentID):
         print('课程不存在！')
 
 
-def getSelectedCourseGrade(studentID):
+def calGPA(grade):
+    if (grade < 60):
+        return 0
+    elif (grade >= 90):
+        return 4
+    else:
+        return (grade - 50)/10
+
+
+def getSelectedCourseGrade(studentID, nav):
     """
     显示学生已选课程成绩（如果有）
     """
-    print('/主菜单/学生管理/查询成绩')
+    newNav = deepcopy(nav)
+    newNav.append('查询成绩')
+    printNav(newNav)
     grade = getStudentGrade(studentID)
     if (grade):
-        printHeader(grade[grade.keys[0]])
+        gpa = sum(calGPA(item['grades']) * item['courseCredit']
+                  for item in grade) / sum(item['courseCredit'] for item in grade)
+        printHeader(grade[0])
         printTable(grade)
+        print('GPA:', gpa)
     else:
         print("暂无成绩！")
 
 
-def studentMenuLoop():
+def studentManageLoop(nav):
     print("请输入学生ID：", end='')
     student = getStudentByID(input())
     if (student == None):
@@ -174,22 +226,89 @@ def studentMenuLoop():
     printHeader(student[0])
     printTable(student)
     studentID = student[0]['studentID']
+    newNav = deepcopy(nav)
+    newNav.append(student[0]['name'])
     while (True):
+        printNav(newNav)
         renderStudentMenu()
         cmd = input()
         if (cmd == '1'):
-            selectCourse(studentID)
+            selectCourse(studentID, newNav)
         elif (cmd == '2'):
-            getSelectedCourse(studentID)
+            getSelectedCourse(studentID, newNav)
         elif (cmd == '3'):
-            quitSelectedCourse(studentID)
+            quitSelectedCourse(studentID, newNav)
         elif (cmd == '4'):
-            getSelectedCourseGrade(studentID)
+            getSelectedCourseGrade(studentID, newNav)
         elif (cmd == 'q'):
             break
         else:
             print('输入错误，请重试！')
             continue
+
+
+def studentQuery(t, data, nav):
+    if (t == 0):
+        student = getStudent()
+    elif (t == 1):
+        student = getStudentBystudentNumber(data)
+    elif (t == 2):
+        student = getStudentByName(data)
+    newNav = deepcopy(nav)
+    newNav.append('查询结果')
+    printNav(newNav)
+    if (len(student) == 0):
+        print('暂无数据')
+    else:
+        printHeader(student[0])
+        printTable(student)
+
+
+def studentQueryLoop(nav):
+    newNav = deepcopy(nav)
+    newNav.append('学生查询')
+    while (True):
+        printNav(newNav)
+        print('''
+<1>     学生列表
+<2>     按学号查询
+<3>     按姓名查询
+<q>     退出
+        ''')
+        cmd = input('请输入菜单项:')
+        if (cmd == '1'):
+            studentQuery(0, 0, newNav)
+        elif (cmd == '2'):
+            studentNumber = input('请输入学号:')
+            studentQuery(1, studentNumber, newNav)
+        elif (cmd == '3'):
+            studentName = input('请输入姓名:')
+            studentQuery(2, studentName, newNav)
+        elif (cmd == 'q'):
+            break
+        else:
+            print('输入错误！')
+
+
+def studentMenuLoop(nav):
+    newNav = deepcopy(nav)
+    newNav.append('学生菜单')
+    while (True):
+        printNav(newNav)
+        print('''
+<1>     学生查询
+<2>     学生管理
+<q>     返回上级菜单
+        ''')
+        cmd = input('请输入菜单项')
+        if (cmd == '1'):
+            studentQueryLoop(newNav)
+        elif (cmd == '2'):
+            studentManageLoop(newNav)
+        elif (cmd == 'q'):
+            break
+        else:
+            print('输入错误！')
 
 ########################课程管理###########################
 
@@ -223,55 +342,77 @@ def printCourseDeleteMenu():
     ''')
 
 
-def courseSearchMenu():
+def courseSearchMenu(nav):
     '''
         查询课程
     '''
-    print("/主菜单/课程管理/查询课程")
-    printCourseSearchMenu()
+    newNav = deepcopy(nav)
+    newNav.append('查询课程')
     while (True):
+        printNav(newNav)
+        printCourseSearchMenu()
         print("请输入菜单项：", end='')
         cmd = input()
         if (cmd == '1'):  # 查询全部
             course = getCourse()
+            if (len(course) == 0):
+                print('暂无课程')
+                continue
             printHeader(course[0])
             printTable(course)
         elif (cmd == '2'):  # 按课程id查询
             print("请输入需要查询的课程id:", end='')
             course = getCourseByID(input())
+            if (len(course) == 0):
+                print('未找到相关课程')
+                continue
             printHeader(course[0])
             printTable(course)
         elif (cmd == '3'):  # 按课程名称查询
             print("请输入需要查询的课程的名称:", end='')
             course = getCourseByName(input())
+            if (len(course) == 0):
+                print('未找到相关课程')
+                continue
             printHeader(course[0])
             printTable(course)
         elif (cmd == '4'):  # 按任课老师id查询
             print("请输入需要查询的课程的任课老师id:", end='')
             course = getCoursebyTeacherID(input())
+            if (len(course) == 0):
+                print('未找到相关课程')
+                continue
             printHeader(course[0])
             printTable(course)
         elif (cmd == '5'):  # 按照任课老师姓名查询
             print("请输入需要查询的课程的任课老师姓名:", end='')
             course = getCoursebyTeacherName(input())
+            if (len(course) == 0):
+                print('未找到相关课程')
+                continue
             printHeader(course[0])
             printTable(course)
         elif (cmd == '6'):  # 按照学分查询
             print("请输入课程学分:", end='')
             course = getCoursebycourseCredit(input())
+            if (len(course) == 0):
+                print('未找到相关课程')
+                continue
             printHeader(course[0])
             printTable(course)
         elif (cmd == 'q'):
             return
 
 
-def courseDeleteMenu():
+def courseDeleteMenu(nav):
     '''
         删除课程
     '''
-    print("/主菜单/课程管理/删除课程")
-    printCourseDeleteMenu()
-    while(True):
+    newNav = deepcopy(nav)
+    newNav.append('删除课程')
+    while (True):
+        printNav(newNav)
+        printCourseDeleteMenu()
         print("请输入菜单项:", end='')
         cmd = input()
         if(cmd == '1'):  # 按照课程id删除课程
@@ -281,8 +422,8 @@ def courseDeleteMenu():
             if(len(course) == 0):
                 print("不存在该课程")
             else:
-                delCourseByID(courseID)
-                quitCourseBycourseID(courseID)  # 同时删除学生的选课记录
+                if (delCourseByID(courseID) and quitCourseBycourseID(courseID)):
+                    print('成功删除课程', course[0]['courseName'])  # 同时删除学生的选课记录
         elif (cmd == '2'):  # 按课程名称删除课程
             print("请输入需要删除的课程的任课老师姓名:", end='')
             courseName = input()
@@ -296,37 +437,32 @@ def courseDeleteMenu():
             return
 
 
-def courseModifyMenu():
+def courseModifyMenu(nav):
     '''
         修改课程信息
     '''
-    print("/主菜单/课程管理/修改课程信息:")
+    newNav = deepcopy(nav)
+    newNav.append('修改课程')
+    printNav(newNav)
     courseID = input("请输入需要修改的课程id:")
-    if(len(getCourseByID(courseID)) == 0):
+    course = getCourseByID(courseID)
+    if(len(course) == 0):
         print("抱歉，并未找到该课程")
     else:
-        courseName = input("请输入更新后的课程名称:")
-        if(len(getCourseByName(courseName)) != 0):
-            print("抱歉已有叫该名称的课程")
+        newCourse = printKeys(course[0])
+        if (updateCourse(newCourse)):
+            print('修改成功！')
         else:
-            teacherID = input("请输入更新后的任课教师id:")
-            if(len(getTeacherByID(teacherID)) == 0):
-                print("抱歉不存在该教师")
-            else:
-                departmentID = input("请输入更新后的课程所属学院:")
-                if(len(getDepartmentId(departmentID)) == 0):
-                    print("抱歉不存在该学院")
-                else:
-                    courseCredit = input("请输入更新后的课程学分:")
-                    updateCourse(courseID, courseName,
-                                 departmentID, teacherID, courseCredit)
+            print('操作失败！')
 
 
-def courseAddMenu():
+def courseAddMenu(nav):
     '''
     添加课程
     '''
-    print("/主菜单/课程管理/添加课程:")
+    newNav = deepcopy(nav)
+    newNav.append('添加课程')
+    printNav(newNav)
     while(True):
         courseName = input("请输入课程名称:")
         if(len(getCourseByName(courseName)) != 0):
@@ -340,33 +476,40 @@ def courseAddMenu():
         else:
             break
     while(True):
-        departmentID = input("请输入该课程所属学院:")
-        if(len(getDepartmentId(departmentID)) == 0):
+        departmentID = input("请输入该课程所属学院ID:")
+        if(len(getDepartmentById(departmentID)) == 0):
             print("抱歉不存在该学院")
         else:
             break
     while(True):
         courseCredit = input("请输入课程学分:")
-        addNewCourse(courseName, departmentID, teacherID, courseCredit)
+        try:
+            courseCredit = int(courseCredit)
+            break
+        except:
+            print('输入有误，请重试！')
+    addNewCourse(courseName, departmentID, teacherID, courseCredit)
 
 
-def courseMenuLoop():
+def courseMenuLoop(nav):
     '''
         课程管理
     '''
-    print("/主菜单/课程管理")
-    renderCourseMenu()
+    newNav = deepcopy(nav)
+    newNav.append('课程管理')
     while (True):
+        printNav(newNav)
+        renderCourseMenu()
         print("请输入菜单项：", end='')
         cmd = input()
         if (cmd == '1'):  # 查询课程
-            courseSearchMenu()
+            courseSearchMenu(newNav)
         elif (cmd == '2'):  # 删除课程
-            courseDeleteMenu()
+            courseDeleteMenu(newNav)
         elif (cmd == '3'):  # 修改课程信息
-            courseModifyMenu()
+            courseModifyMenu(newNav)
         elif (cmd == '4'):  # 添加课程
-            courseAddMenu()
+            courseAddMenu(newNav)
         elif (cmd == 'q'):
             return
 
@@ -395,22 +538,24 @@ def printCollegeModifyMenu():
     ''')
 
 
-def collegeMenuLoop():
+def collegeMenuLoop(nav):
     '''
         学院管理菜单
     '''
-    print("/主菜单/学院管理")
+    newNav = deepcopy(nav)
+    newNav.append('学院管理')
+    printNav(newNav)
     colleges = getDepartmentInfo()
     printHeader(colleges[0])
     printTable(colleges)
     print("请输入学院ID：", end='')
-    college = getDepartmentId(input())
+    college = getDepartmentById(input())
     if (college == None):
         print("不存在该学院！")
         return
 
     while (True):
-        print("/主菜单/学院管理")
+        printNav(newNav)
         print('''
 <1>     查询操作
 <2>     更改操作
@@ -419,68 +564,52 @@ def collegeMenuLoop():
               )
         cmd = input("请输入菜单项：")
         if (cmd == '1'):
-            collegeSearchMenu(college)
+            collegeSearchMenu(college, newNav)
         elif (cmd == '2'):
-            collegeModifyMenu(college)
+            collegeModifyMenu(college, newNav)
         elif (cmd == 'q'):
             return
 
 
-def collegeSearchMenu(college):
+def collegeSearchMenu(college, nav):
     '''
         学院查询
     '''
-
+    newNav = deepcopy(nav)
+    newNav.append('查询管理')
     while (True):
-        print("/主菜单/学院管理/学院查询管理")
+        printNav(newNav)
         printCollegeSearchMenu()
         cmd = input("请输入菜单项：")
         depart = college[0]
+        deptID = depart['departmentID']
         if (cmd == '1'):
             printHeader(depart)
             printTable(college)
         elif (cmd == '2'):
-            teachersInfo = getDepartmentTeacher(depart['departmentName'])
+            teachersInfo = getDepartmentTeacher(deptID)
             printHeader(teachersInfo[0])
             printTable(teachersInfo)
         elif (cmd == '3'):
-            studentsInfo = getDepartmentStudent(depart['departmentName'])
+            studentsInfo = getDepartmentStudent(deptID)
             printHeader(studentsInfo[0])
             printTable(studentsInfo)
         elif (cmd == '4'):
-            coursesInfo = getDepartmentCourse(depart['departmentName'])
+            coursesInfo = getDepartmentCourse(deptID)
             printHeader(coursesInfo[0])
             printTable(coursesInfo)
         elif (cmd == 'q'):
             break
 
 
-def printKeys(item):
-    '''打印输入设置字段值
-    '''
-
-    for key in item.keys():
-        print("请为{}输入值：".format(key), end='')
-        if (key == 'birthday'):
-            print("例：2020-5-14")
-        #     item[key] =datetime.datetime.strptime(input(), '%Y-%m-%d')
-        # else:
-        if (key == 'departmentID' or key == 'teacherID' or key == 'studentID'):
-            item[key] = int(input())
-
-        else:
-            item[key] = input()
-
-    return item
-
-
-def collegeModifyMenu(college):
+def collegeModifyMenu(college, nav):
     '''
         学院修改
     '''
-
+    newNav = deepcopy(nav)
+    newNav.append('学院修改管理')
     while (True):
-        print("/主菜单/学院管理/学院修改管理")
+        printNav(newNav)
         printCollegeModifyMenu()
         cmd = input("请输入菜单项：")
         if (cmd == '1'):
@@ -579,7 +708,60 @@ def getTeacherCourse(teacherID):
     printTable(course)
 
 
-def teacherMenuLoop():
+def teacherQuery(nav, t, data):
+    newNav = deepcopy(nav)
+    newNav.append(t + '查询')
+    printNav(newNav)
+    if (t == '姓名'):
+        teacher = getTeacherByName(data)
+    elif (t == '教工号'):
+        teacher = getTeacherByTeacherNumber(data)
+    elif (t == 'ID'):
+        teacher = getTeacherByID(data)
+    if (len(teacher) == 0):
+        print('未找到相关教师！')
+        return
+    printHeader(teacher[0])
+    printTable(teacher)
+
+
+def queryTeacherLoop(nav):
+    """
+    查询教师
+    """
+    newNav = deepcopy(nav)
+    newNav.append('查询教师')
+    while (True):
+        printNav(newNav)
+        print('''
+<1>     教师列表
+<2>     按姓名查询
+<3>     按教工号查询
+<4>     按ID查询
+<q>     退出
+        ''')
+        cmd = input('请输入命令：')
+        if (cmd == '1'):
+            teacher = getTeacher()
+            if (len(teacher) == 0):
+                print('暂无教师')
+                break
+            printHeader(teacher[0])
+            printTable(teacher)
+        elif (cmd == '2'):
+            teacherQuery(newNav, '姓名', input('请输入姓名：'))
+        elif (cmd == '3'):
+            teacherQuery(newNav, '教工号', input('请输入教工号：'))
+        elif (cmd == '4'):
+            teacherQuery(newNav, 'ID', input('请输入ID：'))
+        elif (cmd == 'q'):
+            break
+        else:
+            print('输入错误！')
+            continue
+
+
+def uniqueTeacherLoop(nav):
     teacher = getTeacher()
     if (len(teacher) == 0):
         print('暂无教师！')
@@ -590,16 +772,42 @@ def teacherMenuLoop():
     if (teacherID == ''):
         print('输入错误！')
         return
-    if (getTeacherByID(teacherID) == None):
+    thisTeacher = getTeacherByID(teacherID)
+    if (len(thisTeacher) == 0):
         print('无此教师！')
         return
+    newNav = deepcopy(nav)
+    newNav.append(thisTeacher[0]['teacherName'])
     while (True):
+        printNav(newNav)
         printTeacherMenu()
         cmd = input('请输入命令：')
         if (cmd == '1'):
             allocateCourse(teacherID)
         elif (cmd == '2'):
             getTeacherCourse(teacherID)
+        elif (cmd == 'q'):
+            break
+        else:
+            print('输入错误！')
+            continue
+
+
+def teacherMenuLoop(nav):
+    newNav = deepcopy(nav)
+    newNav.append('教师管理')
+    while (True):
+        printNav(newNav)
+        print('''
+<1>     查询教师
+<2>     教师管理
+<q>     退出
+        ''')
+        cmd = input('请输入命令：')
+        if (cmd == '1'):
+            queryTeacherLoop(newNav)
+        elif (cmd == '2'):
+            uniqueTeacherLoop(newNav)
         elif (cmd == 'q'):
             break
         else:

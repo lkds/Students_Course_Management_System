@@ -29,18 +29,18 @@ def showHelp():
 
 
 def mainLoop():
-
+    nav = ['主菜单']
     while (True):
         drawMenu()
         cmd = input()
         if (cmd == '1'):
-            menu.studentMenuLoop()
+            menu.studentMenuLoop(nav)
         elif (cmd == '2'):
-            menu.teacherMenuLoop()
+            menu.teacherMenuLoop(nav)
         elif (cmd == '3'):
-            menu.courseMenuLoop()
+            menu.courseMenuLoop(nav)
         elif(cmd == '4'):
-            menu.collegeMenuLoop()
+            menu.collegeMenuLoop(nav)
         elif(cmd == 'h'):
             showHelp()
         elif (cmd == 'q'):
