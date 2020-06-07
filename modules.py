@@ -164,10 +164,10 @@ def quitCourseBycourseID(courseID):
 
 def quitCourseBycourseName(courseName):
     '''
-    根据课程的名称删除学神的选课记录
+    根据课程的名称删除学生的选课记录
     '''
 
-    return generalDelete('sc', 'scID in (select sc.scID from sc,course where sc.courseID = course.ID and course.courseName = '+courseName+')')
+    return generalDelete('sc', 'scID in (select sc.scID from sc,course where sc.courseID = course.courseID and course.courseName = '+courseName+')')
 
 
 def quitCourseByCourseID(studentID, courseID):

@@ -422,17 +422,20 @@ def courseDeleteMenu(nav):
             if(len(course) == 0):
                 print("不存在该课程")
             else:
-                if (delCourseByID(courseID) and quitCourseBycourseID(courseID)):
+                # if (delCourseByID(courseID) and quitCourseBycourseID(courseID)):
+                #     print('成功删除课程', course[0]['courseName'])  # 同时删除学生的选课记录
+                if(delCourseByID(courseID)):
                     print('成功删除课程', course[0]['courseName'])  # 同时删除学生的选课记录
         elif (cmd == '2'):  # 按课程名称删除课程
-            print("请输入需要删除的课程的任课老师姓名:", end='')
+            print("请输入需要删除的课程的课程名称:", end='')
             courseName = input()
             course = getCourseByName(courseName)
             if(len(course) == 0):
                 print("不存在该课程")
             else:
-                delCourseByName(courseName)
-                quitCourseBycourseName(courseName)  # 同时删除学生的选课记录
+                if(delCourseByName(courseName)):
+                    print('成功删除课程', course[0]['courseName'])  # 同时删除学生的选课记录
+                # quitCourseBycourseName(courseName)  # 同时删除学生的选课记录
         elif (cmd == 'q'):
             return
 
