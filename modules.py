@@ -183,7 +183,14 @@ def updateGradeByID(scID, grade):
     根据scID更新/添加成绩
     """
 
-    return generalUpdate('sc', {'grade': grade}, 'scID = {}'.format(scID))
+    return generalUpdate('sc', {'grades': grade}, 'scID = {}'.format(scID))
+
+
+def updateGradeByStudentIDAndCourseID(studentID, courseID, grade):
+    """
+    根据studentID,courseID更新/添加成绩
+    """
+    return generalUpdate('sc', {'grades': grade}, 'studentID = {} AND courseID = {}'.format(studentID, courseID))
 
 
 def getStudentAllCourse(studentID):
@@ -343,6 +350,14 @@ def getDepartmentCourse(departmentID):
     '''  获取学院所有课程 '''
 
     condition = """departmentID = '{}' """.format(
+        departmentID)
+    return generalGet('course', 0, condition)
+
+
+def getDepartmentCourseNotAllocated(departmentID):
+    '''  获取学院所有未分配课程 '''
+
+    condition = """departmentID = '{}' AND teacherID is null or trim(teacherID)=''""".format(
         departmentID)
     return generalGet('course', 0, condition)
 
