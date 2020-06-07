@@ -114,7 +114,7 @@ def getStudent():
     """
     获取所有的学生
     """
-    return generalGet('student')
+    return generalGet('student,department', 0, 'student.departmentID = department.departmentID', ['student.*', 'department.departmentName'])
 
 
 def getStudentByID(studentID):
@@ -212,7 +212,9 @@ def getCourse():
     获取所有课程
     """
 
-    return generalGet('course')
+    return generalGet('course,department,teacher', 0,
+                      'course.teacherID = teacher.teacherID AND course.departmentID = department.departmentID',
+                      ['course.*', 'teacher.teacherName', 'department.departmentName'])
 
 
 def getCourseByID(courseID):
@@ -286,7 +288,9 @@ def updateCourse(newCourse):
 
 def getTeacher():
 
-    return generalGet('teacher', 0)
+    return generalGet('teacher,department', 0,
+                      'teacher.departmentID = department.departmentID',
+                      ['teacher.*', 'department.departmentName'])
 
 
 def getTeacherByID(teacherID):

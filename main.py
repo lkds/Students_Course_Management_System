@@ -18,13 +18,15 @@ def drawMenu():
 <2>     教师课程管理
 <3>     课程管理
 <4>     学院课程管理
-<q>     退出
-<h>     帮助""")
+<h>     帮助
+<q>     退出""")
 
 
 def showHelp():
     print("""
-        牛叉的学生管理系统
+        Pilot的学生管理系统
+        Ver.0.0.3alpha
+        copyright@Team Pilot
     """)
 
 
@@ -32,7 +34,7 @@ def mainLoop():
     nav = ['主菜单']
     while (True):
         drawMenu()
-        cmd = input()
+        cmd = input('请输入命令：')
         if (cmd == '1'):
             menu.studentMenuLoop(nav)
         elif (cmd == '2'):
@@ -44,8 +46,12 @@ def mainLoop():
         elif(cmd == 'h'):
             showHelp()
         elif (cmd == 'q'):
+            print('\nBye~')
             os._exit(0)
 
 
 if __name__ == '__main__':
-    mainLoop()
+    try:
+        mainLoop()
+    except KeyboardInterrupt:
+        print('\nBye~')

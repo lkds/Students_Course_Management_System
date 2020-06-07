@@ -37,7 +37,7 @@ def alignPrint(data):
     :data-list
     """
     for item in data:
-        print('{}'.format(my_align(str(item), 10, 'C')), end='')
+        print('{}'.format(my_align(str(item), 15, 'C')), end='')
     print('')
 
 
@@ -62,7 +62,7 @@ def printHeader(data):
     header['office'] = '办公室'
     header['homeAddress'] = '住址'
     header['courseID'] = '课程号'
-    header['teacherName'] = '姓名'
+    header['teacherName'] = '教师名'
     header['courseName'] = '课程名'
     header['courseCredit'] = '学分'
     header['departmentName'] = '学院名'
@@ -82,7 +82,7 @@ def printTable(data):
     """
     for item in data:
         for key in item.keys():
-            print('{}'.format(my_align(str(item[key]), 10, 'C')), end='')
+            print('{}'.format(my_align(str(item[key]), 15, 'C')), end='')
         print('')
     print('')
 
@@ -220,7 +220,7 @@ def getSelectedCourseGrade(studentID, nav):
 def studentManageLoop(nav):
     print("请输入学生ID：", end='')
     student = getStudentByID(input())
-    if (student == None):
+    if (len(student) == 0):
         print("未找到相关学生！")
         return
     printHeader(student[0])
