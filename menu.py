@@ -101,6 +101,7 @@ def printKeys(item):
     '''
     获取修改值
     :param item=[dict] 原数据
+    :param type=int 
     :return [dict] 新数据
     '''
 
@@ -591,16 +592,25 @@ def collegeSearchMenu(college, nav):
             printTable(college)
         elif (cmd == '2'):
             teachersInfo = getDepartmentTeacher(deptID)
-            printHeader(teachersInfo[0])
-            printTable(teachersInfo)
+            if (teachersInfo == ()):
+                print("没有老师")
+            else:
+                printHeader(teachersInfo[0])
+                printTable(teachersInfo)
         elif (cmd == '3'):
             studentsInfo = getDepartmentStudent(deptID)
-            printHeader(studentsInfo[0])
-            printTable(studentsInfo)
+            if (studentsInfo == ()):
+                print("没有招收学生")
+            else:
+                printHeader(studentsInfo[0])
+                printTable(studentsInfo)
         elif (cmd == '4'):
             coursesInfo = getDepartmentCourse(deptID)
-            printHeader(coursesInfo[0])
-            printTable(coursesInfo)
+            if (coursesInfo == ()):
+                print("没有开设课程")
+            else:
+                printHeader(coursesInfo[0])
+                printTable(coursesInfo)
         elif (cmd == 'q'):
             break
 
@@ -609,6 +619,10 @@ def collegeModifyMenu(college, nav):
     '''
         学院修改
     '''
+    studentKeys = {'birthday': datetime.date(2020, 5, 15), 'departmentID': 1, 'gender': '男',
+                   'grade': '2017', 'name': 'tom', 'studentNumber': '20174303'}
+    teacherKeys = {'birthday': datetime.date(2020, 5, 16), 'departmentID': 1, 'gender': '男', 'homeAddress': '沙坪坝',
+                   'office': 'A1804',  'teacherName': 'Tom', 'teacherNumber': '0001', 'title': '副教授'}
     newNav = deepcopy(nav)
     newNav.append('学院修改管理')
     while (True):
@@ -625,9 +639,9 @@ def collegeModifyMenu(college, nav):
         # 添加学生
         elif (cmd == '2'):
             # 通过查找一个学生获取其keys
-            studentID = 1
-            student = getStudentByID(studentID)[0]
-            newStudent = printKeys(student)
+            # studentID = 3
+            # student = getStudentByID(studentID)[0]
+            newStudent = printKeys(studentKeys)
             if (addStudent(newStudent)):
                 print('添加成功')
             else:
@@ -636,9 +650,9 @@ def collegeModifyMenu(college, nav):
         # 添加老师
         elif (cmd == '3'):
             # 通过查找一个老师获取其keys
-            teacherID = 1
-            teacher = getTeacherByID(teacherID)[0]
-            newTeacher = printKeys(teacher)
+            # teacherID = 1
+            # teacher = getTeacherByID(teacherID)[0]
+            newTeacher = printKeys(teacherKeys)
             if (addTeacher(newTeacher)):
                 print('添加成功')
             else:
@@ -667,6 +681,7 @@ def collegeModifyMenu(college, nav):
                     break
                 if (deleteTeacher(teacher['teacherID'])):
                     print('删除成功')
+                    break
                 else:
                     print('删除失败')
 
