@@ -125,6 +125,7 @@ def renderStudentMenu():
 <2>     查询已选课程
 <3>     退课
 <4>     查询成绩
+<5>     录入成绩
 <q>     返回上级菜单
     ''')
 
@@ -213,9 +214,37 @@ def getSelectedCourseGrade(studentID, nav):
                   for item in grade) / sum(item['courseCredit'] for item in grade)
         printHeader(grade[0])
         printTable(grade)
-        print('GPA:', gpa)
+        print('GPA:%.2f' % gpa)
     else:
         print("暂无成绩！")
+
+
+def updateSelectedCourseGrade(studentID, nav):
+    """
+    显示学生已选课程成绩（如果有）
+    """
+    newNav = deepcopy(nav)
+    newNav.append('录入成绩')
+    printNav(newNav)
+    course = getStudentAllCourse(studentID)
+    if(course):
+        printHeader(course[0])
+        printTable(course)
+    else:
+        print("无记录！")
+        return
+    courseID = input('请输入需要录入的课程ID：')
+    if (getCourseByID(courseID)):
+        if (getStudentSelectedCourseByCourseID(studentID, courseID)):
+            gr = int(input('请输入成绩：'))
+            if (updateGradeByStudentIDAndCourseID(studentID, courseID, gr)):
+                print('录入成功！')
+            else:
+                print('录入失败！')
+        else:
+            print('未选该课程！')
+    else:
+        print('课程不存在！')
 
 
 def studentManageLoop(nav):
@@ -241,6 +270,8 @@ def studentManageLoop(nav):
             quitSelectedCourse(studentID, newNav)
         elif (cmd == '4'):
             getSelectedCourseGrade(studentID, newNav)
+        elif (cmd == '5'):
+            updateSelectedCourseGrade(studentID, newNav)
         elif (cmd == 'q'):
             break
         else:
@@ -712,13 +743,16 @@ def allocateCourse(teacherID):
     if (courseID == ''):
         print('输入错误！')
         return
-    elif (getCourseByID(int(courseID)) == None):
+    elif (len(getCourseByID(int(courseID))) == 0):
         print('无该课程！')
         return
     elif (getCourseByID(int(courseID))[0]['departmentID'] != deptID):
         print('仅能分配老师所在学院课程！')
         return
     else:
+        course = getCourseByID(int(courseID))[0]
+        course['teacherID'] = teacherID
+        updateCourse(course)
         print('分配成功')
 
 
