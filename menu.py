@@ -697,9 +697,14 @@ def allocateCourse(teacherID):
     if (courseID == ''):
         print('输入错误！')
         return
-    if (getCourseByID(int(courseID)) == None):
+    elif (getCourseByID(int(courseID)) == None):
         print('无该课程！')
         return
+    elif (getCourseByID(int(courseID))[0]['departmentID'] != deptID):
+        print('仅能分配老师所在学院课程！')
+        return
+    else:
+        print('分配成功')
 
 
 def getTeacherCourse(teacherID):
